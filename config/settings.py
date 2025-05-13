@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     "rest_framework",
     "debug_toolbar",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ]
+}
