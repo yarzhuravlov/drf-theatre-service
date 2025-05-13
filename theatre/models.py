@@ -83,3 +83,6 @@ class ZonePrice(models.Model):
                 name="unique_zone_performance",
             )
         ]
+
+    def __str__(self) -> str:
+        return f"{self.performance} - {self.zone.name}"
