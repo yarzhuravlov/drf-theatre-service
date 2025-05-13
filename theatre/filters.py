@@ -1,4 +1,3 @@
-from codecs import lookup
 from django_filters import rest_framework as filters
 
 from theatre.models import Performance
