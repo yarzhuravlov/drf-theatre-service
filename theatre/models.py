@@ -86,3 +86,24 @@ class ZonePrice(models.Model):
 
     def __str__(self) -> str:
         return f"{self.performance} - {self.zone.name}"
+
+
+class Ticket(models.Model):
+    performance = models.ForeignKey(Performance, on_delete=models.PROTECT)
+    zone = models.ForeignKey(Zone, on_delete=models.PROTECT)
+    row = models.PositiveIntegerField()
+    seat = models.PositiveIntegerField()
+
+    class Meta:
+        default_related_name = "tickets"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["performance", "zone", "row", "seat"],
+                name="unique_performance_zone_row_seat",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f"{self.performance} - {self.zone.name} ({self.row}, {self.seat})"
+        )

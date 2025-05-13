@@ -6,6 +6,7 @@ from theatre.models import (
     Performance,
     Play,
     TheatreHall,
+    Ticket,
     Zone,
     ZonePrice,
 )
@@ -39,6 +40,10 @@ class ZonePriceInline(admin.StackedInline):
     model = ZonePrice
 
 
+class TicketInline(admin.TabularInline):
+    model = Ticket
+
+
 @admin.register(Performance)
 class PerformanceAdmin(admin.ModelAdmin):
-    inlines = [ZonePriceInline]
+    inlines = [ZonePriceInline, TicketInline]
