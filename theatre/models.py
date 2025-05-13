@@ -36,10 +36,30 @@ class TheatreHall(models.Model):
         return self.name
 
 
+class Zone(models.Model):
+    name = models.CharField(max_length=255)
+    theatre_hall = models.ForeignKey(TheatreHall, on_delete=models.PROTECT)
+    rows = models.PositiveIntegerField()
+    seats_in_row = models.PositiveIntegerField()
+
+    class Meta:
+        default_related_name = "zones"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "theatre_hall"],
+                name="unique_name_theatre_hall",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.theatre_hall.name} - {self.name}"
+
+
 class Performance(models.Model):
     play = models.ForeignKey(Play, on_delete=models.PROTECT)
     theatre_hall = models.ForeignKey(TheatreHall, on_delete=models.PROTECT)
     show_time = models.DateTimeField()
+    zones = models.ManyToManyField(Zone, through="ZonePrice")
 
     class Meta:
         default_related_name = "performances"
@@ -50,21 +70,16 @@ class Performance(models.Model):
         )
 
 
-class TheatreHallZone(models.Model):
-    name = models.CharField(max_length=255)
+class ZonePrice(models.Model):
+    zone = models.ForeignKey(Zone, on_delete=models.PROTECT)
     performance = models.ForeignKey(Performance, on_delete=models.PROTECT)
-    rows = models.PositiveIntegerField()
-    seats_in_row = models.PositiveIntegerField()
     ticket_price = models.PositiveBigIntegerField()
 
     class Meta:
-        default_related_name = "theatre_hall_zones"
+        default_related_name = "zone_prices"
         constraints = [
             models.UniqueConstraint(
-                fields=["name", "performance"],
-                name="unique_name_performance",
+                fields=["zone", "performance"],
+                name="unique_zone_performance",
             )
         ]
-
-    def __str__(self) -> str:
-        return f"{self.performance.play} - {self.name}"
