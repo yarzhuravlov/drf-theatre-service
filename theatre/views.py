@@ -2,6 +2,7 @@ from django.db.models import F, Count, QuerySet, Sum
 from rest_framework import viewsets
 
 from base.mixins import BaseViewSetMixin
+from theatre.filters import PerformanceFilter
 from theatre.models import Performance, Play
 from theatre.serializers import (
     PerformanceListSerializer,
@@ -25,6 +26,7 @@ class PerformanceViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
         "theatre_hall",
     )
     serializer_class = PerformanceSerializer
+    filterset_class = PerformanceFilter
 
     action_serializers = {
         "list": PerformanceListSerializer,
