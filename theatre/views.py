@@ -5,6 +5,7 @@ from base.mixins import BaseViewSetMixin
 from theatre.filters import PerformanceFilter
 from theatre.models import Performance, Play
 from theatre.serializers import (
+    PerformanceDetailSerializer,
     PerformanceListSerializer,
     PerformanceSerializer,
     PlayListSerializer,
@@ -30,12 +31,19 @@ class PerformanceViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
 
     action_serializers = {
         "list": PerformanceListSerializer,
+        "retrieve": PerformanceDetailSerializer,
     }
 
     def get_queryset(self) -> QuerySet[Performance]:
         queryset = self.queryset
 
-        if self.action == "list":
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related(
+                "zone_prices__zone",
+                "zones",
+            )
+
+        if self.action in {"list", "retrieve"}:
             queryset = (
                 queryset.annotate(
                     tickets_count=Sum(

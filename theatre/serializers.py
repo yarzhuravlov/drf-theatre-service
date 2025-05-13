@@ -6,6 +6,7 @@ from theatre.models import (
     Performance,
     Play,
     TheatreHall,
+    Ticket,
     Zone,
     ZonePrice,
 )
@@ -79,7 +80,26 @@ class PerformanceListSerializer(PerformanceSerializer):
         ]
 
 
-class ZonePriceSerializer(serializers.ModelSerializer):
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["id", "zone", "row", "seat"]
+
+
+class ZoneInPerformanceDetailSerializer(serializers.ModelSerializer):
+    zone = ZoneSerializer()
+
     class Meta:
         model = ZonePrice
-        fields = ["id", "performance", "ticket_price"]
+        fields = ["id", "zone", "ticket_price"]
+
+
+class PerformanceDetailSerializer(PerformanceListSerializer):
+    zone_prices = ZoneInPerformanceDetailSerializer(many=True)
+    tickets = TicketSerializer(many=True)
+
+    class Meta(PerformanceListSerializer.Meta):
+        fields = PerformanceListSerializer.Meta.fields + [
+            "tickets",
+            "zone_prices",
+        ]
