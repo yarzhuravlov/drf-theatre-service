@@ -1,3 +1,4 @@
+from typing import Iterable
 from django.db import models
 
 
@@ -107,3 +108,62 @@ class Ticket(models.Model):
         return (
             f"{self.performance} - {self.zone.name} ({self.row}, {self.seat})"
         )
+
+    @staticmethod
+    def validate_seat(
+        row: int,
+        rows: int,
+        seat: int,
+        seats_in_row: int,
+        error_to_raise: type[Exception],
+    ):
+        if not (1 <= seat <= seats_in_row):
+            raise error_to_raise(
+                {
+                    "seat": (
+                        f"seat must be in range "
+                        f"[1, {seats_in_row}] not {seat}"
+                    )
+                }
+            )
+
+        if not (1 <= row <= rows):
+            raise error_to_raise(
+                {"seat": (f"seat must be in range " f"[1, {rows}] not {row}")}
+            )
+
+    @staticmethod
+    def validate_zone(
+        performance: Performance, zone: Zone, error_to_raise: type[Exception]
+    ):
+        if not Performance.objects.filter(
+            id=performance.id,
+            zones=zone,
+        ).exists():
+            raise error_to_raise(
+                {"zone": "This zone is not available for this performance"}
+            )
+
+    def clean(self) -> None:
+        Ticket.validate_zone(
+            self.performance,
+            self.zone,
+            ValueError,
+        )
+        Ticket.validate_seat(
+            self.row,
+            self.zone.rows,
+            self.seat,
+            self.zone.seats_in_row,
+            ValueError,
+        )
+
+    def save(
+        self,
+        force_insert: bool = False,
+        force_update: bool = False,
+        using: str | None = None,
+        update_fields: Iterable[str] | None = None,
+    ) -> None:
+        self.full_clean()
+        return super().save(force_insert, force_update, using, update_fields)
