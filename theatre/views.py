@@ -35,7 +35,6 @@ class PlayViewSet(
         queryset = self.queryset
 
         if self.action == "retrieve":
-            print(self.args, self.kwargs)
             queryset = queryset.prefetch_related(
                 Prefetch(
                     "performances",
