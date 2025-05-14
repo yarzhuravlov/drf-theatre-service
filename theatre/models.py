@@ -1,8 +1,11 @@
+import pathlib
+import uuid
 from typing import Iterable
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Count, F, QuerySet, Sum
+from django.utils.text import slugify
 
 
 class Actor(models.Model):
@@ -20,11 +23,20 @@ class Genre(models.Model):
         return self.name
 
 
+def play_image_path(instance: "Play", filename: str) -> pathlib.Path:
+    filename = (
+        f"{slugify(instance.title)}-{uuid.uuid4()}"
+        + pathlib.Path(filename).suffix
+    )
+    return pathlib.Path("upload/plays/") / pathlib.Path(filename)
+
+
 class Play(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     actors = models.ManyToManyField(Actor)
     genres = models.ManyToManyField(Genre)
+    poster = models.ImageField(null=True, upload_to=play_image_path)
 
     class Meta:
         default_related_name = "plays"

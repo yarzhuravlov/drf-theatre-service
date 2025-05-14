@@ -134,6 +134,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+MEDIA_ROOT = BASE_DIR / "media"
+
+MEDIA_URL = "/media/"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -170,9 +174,9 @@ DJOSER = {
 }
 
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
-PAYMENT_SESSION_EXPIRATION_MINUTES = int(os.environ.get(
-    "PAYMENT_SESSION_EXPIRATION_MINUTES"
-))
+PAYMENT_SESSION_EXPIRATION_MINUTES = int(
+    os.environ.get("PAYMENT_SESSION_EXPIRATION_MINUTES")
+)
 PAYMENT_CURRENCY = os.environ.get("PAYMENT_CURRENCY")
 FRONTEND_SUCCESS_URL = os.environ.get("FRONTEND_SUCCESS_URL")
 FRONTEND_CANCEL_URL = os.environ.get("FRONTEND_CANCEL_URL")
