@@ -80,6 +80,18 @@ class PerformanceListSerializer(PerformanceSerializer):
         ]
 
 
+class PerformanceInPlayListSerializer(PerformanceListSerializer):
+    class Meta(PerformanceListSerializer.Meta):
+        fields = ["id", "theatre_hall", "show_time", "available_tickets"]
+
+
+class PlayRetrieveSerializer(PlayListSerializer):
+    future_performances = PerformanceInPlayListSerializer(many=True)
+
+    class Meta(PlayListSerializer.Meta):
+        fields = PlayListSerializer.Meta.fields + ["future_performances"]
+
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket

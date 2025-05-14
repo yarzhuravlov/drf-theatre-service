@@ -1,5 +1,6 @@
 from typing import Iterable
 from django.db import models
+from django.db.models import F, Count, QuerySet, Sum
 
 
 class Actor(models.Model):
@@ -68,6 +69,19 @@ class Performance(models.Model):
     def __str__(self) -> str:
         return (
             f"{self.play.title} in {self.theatre_hall.name} ({self.show_time})"
+        )
+
+    @staticmethod
+    def annotate_with_available_tickets(queryset: QuerySet["Performance"]):
+        return queryset.annotate(
+            tickets_count=Sum(
+                F("zone_prices__zone__rows")
+                * F("zone_prices__zone__seats_in_row"),
+                distinct=True,
+            ),
+            tickets_bought=Count("tickets", distinct=True),
+        ).annotate(
+            available_tickets=F("tickets_count") - F("tickets_bought"),
         )
 
 

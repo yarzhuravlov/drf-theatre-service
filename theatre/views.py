@@ -1,4 +1,5 @@
-from django.db.models import F, Count, QuerySet, Sum
+from django.db.models import Prefetch, QuerySet
+from django.utils.timezone import now
 from rest_framework import filters, generics, viewsets
 
 from base.mixins import BaseViewSetMixin
@@ -11,20 +12,57 @@ from theatre.serializers import (
     PerformanceListSerializer,
     PerformanceSerializer,
     PlayListSerializer,
+    PlayRetrieveSerializer,
     PlaySerializer,
 )
 
 
-class PlayViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
+class PlayViewSet(
+    BaseViewSetMixin,
+    generics.ListAPIView,
+    generics.RetrieveAPIView,
+    viewsets.ViewSet,
+):
     queryset = Play.objects.all()
     serializer_class = PlaySerializer
 
     action_serializers = {
         "list": PlayListSerializer,
+        "retrieve": PlayRetrieveSerializer,
     }
 
+    def get_queryset(self):
+        queryset = self.queryset
 
-class PerformanceViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
+        if self.action == "retrieve":
+            print(self.args, self.kwargs)
+            queryset = queryset.prefetch_related(
+                Prefetch(
+                    "performances",
+                    queryset=Performance.annotate_with_available_tickets(
+                        Performance.objects.filter(
+                            play__id=int(self.kwargs["pk"]),
+                            show_time__gt=now(),
+                        ),
+                    )
+                    .distinct()
+                    .prefetch_related(
+                        "play__actors",
+                        "play__genres",
+                    ),
+                    to_attr="future_performances",
+                )
+            )
+
+        return queryset
+
+
+class PerformanceViewSet(
+    BaseViewSetMixin,
+    generics.ListAPIView,
+    generics.RetrieveAPIView,
+    viewsets.ViewSet,
+):
     queryset = Performance.objects.select_related(
         "theatre_hall",
     )
@@ -47,17 +85,7 @@ class PerformanceViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
 
         if self.action in {"list", "retrieve"}:
             queryset = (
-                queryset.annotate(
-                    tickets_count=Sum(
-                        F("zone_prices__zone__rows")
-                        * F("zone_prices__zone__seats_in_row"),
-                        distinct=True,
-                    ),
-                    tickets_bought=Count("tickets", distinct=True),
-                )
-                .annotate(
-                    available_tickets=F("tickets_count") - F("tickets_bought"),
-                )
+                Performance.annotate_with_available_tickets(queryset)
                 .distinct()
                 .prefetch_related(
                     "play__actors",
