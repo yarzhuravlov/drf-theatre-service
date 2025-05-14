@@ -1,10 +1,11 @@
 from django.db.models import F, Count, QuerySet, Sum
-from rest_framework import viewsets
+from rest_framework import filters, generics, viewsets
 
 from base.mixins import BaseViewSetMixin
 from theatre.filters import PerformanceFilter
-from theatre.models import Performance, Play
+from theatre.models import Actor, Performance, Play
 from theatre.serializers import (
+    ActorSerializer,
     PerformanceDetailSerializer,
     PerformanceListSerializer,
     PerformanceSerializer,
@@ -64,3 +65,10 @@ class PerformanceViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
             )
 
         return queryset
+
+
+class ActorViewSet(generics.ListAPIView, viewsets.ViewSet):
+    queryset = Actor.objects.all()
+    serializer_class = ActorSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["first_name", "last_name"]
