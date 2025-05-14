@@ -1,6 +1,8 @@
 from typing import Iterable
+
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import F, Count, QuerySet, Sum
+from django.db.models import Count, F, QuerySet, Sum
 
 
 class Actor(models.Model):
@@ -143,7 +145,7 @@ class Ticket(models.Model):
 
         if not (1 <= row <= rows):
             raise error_to_raise(
-                {"seat": (f"seat must be in range " f"[1, {rows}] not {row}")}
+                {"row": (f"row must be in range " f"[1, {rows}] not {row}")}
             )
 
     @staticmethod
@@ -162,14 +164,14 @@ class Ticket(models.Model):
         Ticket.validate_zone(
             self.performance,
             self.zone,
-            ValueError,
+            ValidationError,
         )
         Ticket.validate_seat(
             self.row,
             self.zone.rows,
             self.seat,
             self.zone.seats_in_row,
-            ValueError,
+            ValidationError,
         )
 
     def save(
