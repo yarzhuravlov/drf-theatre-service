@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
+from payments.models import Payment
 from reservations.models import Reservation
 from theatre.models import Ticket, Performance
 from theatre.serializers import (
@@ -24,6 +25,11 @@ class ReservationCreateSerializer(ReservationSerializer):
     def validate(self, attrs):
         tickets_data = attrs["tickets"]
 
+        if len(tickets_data) > 10:
+            raise serializers.ValidationError(
+                "You cannot add more than 10 tickets to one reservation"
+            )
+
         for ticket_data in tickets_data:
             Ticket.validate_zone(
                 ticket_data["performance"],
@@ -37,6 +43,15 @@ class ReservationCreateSerializer(ReservationSerializer):
                 ticket_data["seat"],
                 ticket_data["zone"].seats_in_row,
                 serializers.ValidationError,
+            )
+
+        if Reservation.objects.filter(
+            user=self.context["request"].user,
+            payment__status=Payment.Statuses.PENDING,
+        ).exists():
+            raise serializers.ValidationError(
+                "You can't create reservation while "
+                "you have pending payment on other reservation"
             )
 
         return attrs

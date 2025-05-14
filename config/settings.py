@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +47,7 @@ INSTALLED_APPS = [
     "theatre",
     "reservations",
     "accounts",
+    "payments",
     # 3rd party apps
     "rest_framework",
     "rest_framework.authtoken",
@@ -163,3 +168,12 @@ DJOSER = {
     "SERIALIZERS": {},
     "LOGIN_FIELD": "email",
 }
+
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+PAYMENT_SESSION_EXPIRATION_MINUTES = int(os.environ.get(
+    "PAYMENT_SESSION_EXPIRATION_MINUTES"
+))
+PAYMENT_CURRENCY = os.environ.get("PAYMENT_CURRENCY")
+FRONTEND_SUCCESS_URL = os.environ.get("FRONTEND_SUCCESS_URL")
+FRONTEND_CANCEL_URL = os.environ.get("FRONTEND_CANCEL_URL")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")

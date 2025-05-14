@@ -22,7 +22,8 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 
 api_v1_urlpatterns = [
     path("theatre/", include("theatre.urls")),
-    path("reservations/", include("reservations.urls"))
+    path("reservations/", include("reservations.urls")),
+    path("payments/", include("payments.urls")),
 ]
 
 urlpatterns = [

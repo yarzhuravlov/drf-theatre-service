@@ -14,3 +14,7 @@ class Reservation(CreatedAtBaseModel, models.Model):
 
     class Meta(CreatedAtBaseModel.Meta):
         default_related_name = "reservations"
+
+    @property
+    def total_price(self):
+        return sum(ticket.price for ticket in self.tickets.all())

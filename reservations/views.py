@@ -8,6 +8,7 @@ from reservations.serializers import (
     ReservationListSerializer,
     ReservationSerializer,
 )
+from reservations.services import ReservationService
 
 
 class ReservationViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
@@ -15,10 +16,18 @@ class ReservationViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     serializer_class = ReservationSerializer
     permission_classes = [IsAuthenticated]
 
+    reservations_service = ReservationService("stripe")
+
     action_serializers = {
         "create": ReservationCreateSerializer,
         "list": ReservationListSerializer,
     }
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        self.reservations_service.create_payment_for_reservation(
+            serializer.instance
+        )
 
     def get_queryset(self):
         queryset = self.queryset
