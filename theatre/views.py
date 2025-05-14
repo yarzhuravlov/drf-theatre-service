@@ -3,9 +3,10 @@ from rest_framework import filters, generics, viewsets
 
 from base.mixins import BaseViewSetMixin
 from theatre.filters import PerformanceFilter
-from theatre.models import Actor, Performance, Play
+from theatre.models import Actor, Genre, Performance, Play
 from theatre.serializers import (
     ActorSerializer,
+    GenreSerializer,
     PerformanceDetailSerializer,
     PerformanceListSerializer,
     PerformanceSerializer,
@@ -72,3 +73,10 @@ class ActorViewSet(generics.ListAPIView, viewsets.ViewSet):
     serializer_class = ActorSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["first_name", "last_name"]
+
+
+class GenreViewSet(generics.ListAPIView, viewsets.ViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name"]
