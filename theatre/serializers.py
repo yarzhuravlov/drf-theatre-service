@@ -95,7 +95,7 @@ class PlayRetrieveSerializer(PlayListSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
-        fields = ["id", "zone", "row", "seat"]
+        fields = ["id", "zone", "row", "seat", "performance"]
 
 
 class ZoneInPerformanceDetailSerializer(serializers.ModelSerializer):

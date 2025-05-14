@@ -183,3 +183,10 @@ class Ticket(models.Model):
     ) -> None:
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)
+
+    @property
+    def price(self):
+        return ZonePrice.objects.get(
+            performance=self.performance,
+            zone=self.zone,
+        ).ticket_price

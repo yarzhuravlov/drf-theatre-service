@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # custom apps
     "theatre",
+    "reservations",
     "accounts",
     # 3rd party apps
     "rest_framework",
