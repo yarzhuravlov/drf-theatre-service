@@ -1,0 +1,42 @@
+[flake8]
+max-line-length = 79
+
+indent-size = 4
+
+# Ignore specific rules that conflict with Google style
+ignore =
+    # Google doesn't require docstrings in every function/method
+    D100,D101,D102,D103,D104,
+    # Google allows some flexibility with line breaks around binary operators
+    W503,
+    # Google style allows for compact formatting in some cases
+    E133,
+
+# Additional Google style preferences
+select = 
+    E,  # pycodestyle errors
+    F,  # pyflakes
+    W,  # pycodestyle warnings
+    C90, # McCabe complexity
+
+# Exclude common directories not to be checked
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    venv,
+    env,
+    .venv,
+    .env,
+    migrations
+
+# Maximum McCabe complexity (Google recommends keeping functions simple)
+max-complexity = 10
+
+# Import order style (Google specific)
+import-order-style = google
+
+# Statistical reporting
+statistics = True
+count = True

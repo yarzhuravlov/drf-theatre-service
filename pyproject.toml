@@ -10,7 +10,31 @@ python = "^3.12"
 django = "^5.2.1"
 django-types = "^0.20.0"
 django-stubs-ext = "^5.2.0"
+djangorestframework = "^3.16.0"
+django-debug-toolbar = "^5.2.0"
+django-filter = "^25.1"
+djoser = "^2.3.1"
+djangorestframework-simplejwt = "^5.5.0"
+social-auth-app-django = "^5.4.3"
+stripe = "^12.1.0"
+python-dotenv = "^1.1.0"
+pillow = "^11.2.1"
+gunicorn = "^23.0.0"
+psycopg2-binary = "^2.9.10"
+drf-spectacular = "^0.28.0"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.2.0"
+flake8-import-order = "^0.18.2"
+flake8-docstrings = "^1.7.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+extend-exclude = '''
+(
+  /migrations/
+)'''
