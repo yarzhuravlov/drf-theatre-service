@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "djoser",
     "debug_toolbar",
     "django_filters",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -169,6 +170,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 if DEBUG:
@@ -195,3 +197,10 @@ PAYMENT_CURRENCY = os.environ.get("PAYMENT_CURRENCY")
 FRONTEND_SUCCESS_URL = os.environ.get("FRONTEND_SUCCESS_URL")
 FRONTEND_CANCEL_URL = os.environ.get("FRONTEND_CANCEL_URL")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Theater Service API',
+    'DESCRIPTION': 'API for theater',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

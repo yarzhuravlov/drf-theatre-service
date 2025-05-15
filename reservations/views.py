@@ -10,7 +10,23 @@ from reservations.serializers import (
 )
 from reservations.services import ReservationService
 
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+)
 
+
+@extend_schema_view(
+    list=extend_schema(
+        description="Retrieve a list of reservations made by the authenticated user.",
+    ),
+    create=extend_schema(
+        description="Create a new reservation with tickets for the authenticated user.",
+    ),
+    retrieve=extend_schema(
+        description="Retrieve details of a specific reservation by its ID.",
+    ),
+)
 class ReservationViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer

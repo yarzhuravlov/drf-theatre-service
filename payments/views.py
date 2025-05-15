@@ -8,7 +8,36 @@ from payments.services.factory import get_payment_service
 from payments.services.stripe import StripePaymentService
 from reservations.models import Reservation
 
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiResponse,
+    # OpenApiParameter,
+)
 
+
+@extend_schema_view(
+    post=extend_schema(
+        description="Create or retrieve a Stripe checkout session for a reservation.",
+        responses={
+            200: OpenApiResponse(
+                response={
+                    "type": "object",
+                    "properties": {
+                        "checkout_url": {
+                            "type": "string",
+                            "description": "URL to redirect the user to the Stripe checkout session.",
+                        }
+                    },
+                },
+                description="Checkout session created successfully.",
+            ),
+            404: OpenApiResponse(
+                description="Reservation not found.",
+            ),
+        },
+    )
+)
 class CreateCheckoutSessionView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -24,6 +53,12 @@ class CreateCheckoutSessionView(APIView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
+@extend_schema_view(
+    post=extend_schema(
+        description="Handle Stripe webhook events.",
+        request=None,
+    )
+)
 class StripeWebhookView(APIView):
     def post(self, request):
         payload = request.body
