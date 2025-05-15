@@ -27,8 +27,8 @@ from drf_spectacular.views import (
 )
 
 api_v1_urlpatterns = [
-    path("theatre/", include("theatre.urls")),
-    path("reservations/", include("reservations.urls")),
+    path("theatre/", include("theatre.urls", namespace="theatre")),
+    path("reservations/", include("reservations.urls", namespace="reservations")),
     path("payments/", include("payments.urls")),
     path("accounts/", include("accounts.urls")),
     # Schema & Docs

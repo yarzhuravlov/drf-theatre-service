@@ -20,7 +20,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
 class ReservationCreateSerializer(ReservationSerializer):
     class Meta(ReservationSerializer.Meta):
-        fields = ["tickets"]
+        fields = ["id", "tickets"]
 
     def validate(self, attrs):
         tickets_data = attrs["tickets"]

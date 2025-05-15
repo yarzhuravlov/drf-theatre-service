@@ -9,3 +9,5 @@ router.register("actors", views.ActorViewSet)
 router.register("genres", views.GenreViewSet)
 
 urlpatterns = router.urls
+
+app_name = "theatre"
