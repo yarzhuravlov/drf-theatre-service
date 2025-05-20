@@ -1,15 +1,14 @@
 import json
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone as datetime_timezone, timedelta
 from unittest.mock import patch, MagicMock
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from django.conf import settings
 from rest_framework import status
-from rest_framework.test import APIClient, APITransactionTestCase
+from rest_framework.test import APIClient
 
 from payments.models import Payment
 from reservations.models import Reservation
