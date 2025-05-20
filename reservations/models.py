@@ -1,0 +1,20 @@
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.db.models import ForeignKey, ManyToManyField
+
+from base.models import TimestampedBaseModel
+from theatre.models import Ticket
+
+User = get_user_model()
+
+
+class Reservation(TimestampedBaseModel, models.Model):
+    user = ForeignKey(User, on_delete=models.CASCADE)
+    tickets = ManyToManyField(Ticket)
+
+    class Meta(TimestampedBaseModel.Meta):
+        default_related_name = "reservations"
+
+    @property
+    def total_price(self):
+        return sum(ticket.price for ticket in self.tickets.all())
