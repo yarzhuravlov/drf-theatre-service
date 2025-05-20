@@ -87,7 +87,7 @@ class ReservationViewSetTestCase(TestCase):
 
         # Mock payment service
         self.payment_service_mock = MagicMock()
-        self.payment_service_mock.create_checkout_session.return_value = (
+        self.payment_service_mock.retrieve_or_create_checkout_session.return_value = (
             "https://test-checkout-url.com"
         )
 

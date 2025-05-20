@@ -8,7 +8,7 @@ class AbstractPaymentService(ABC):
         self.reservation = reservation
 
     @abstractmethod
-    def create_checkout_session(self) -> str:
+    def retrieve_or_create_checkout_session(self) -> str:
         """Returns a redirect URL to the payment provider"""
         pass
 

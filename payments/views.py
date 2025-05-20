@@ -47,7 +47,7 @@ class CreateCheckoutSessionView(APIView):
             user=request.user,
         )
         service = get_payment_service("stripe", reservation)
-        url = service.create_checkout_session()
+        url = service.retrieve_or_create_checkout_session()
 
         return Response({"checkout_url": url})
 

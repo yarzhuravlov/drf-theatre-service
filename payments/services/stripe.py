@@ -11,20 +11,15 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class StripePaymentService(AbstractPaymentService):
-    def create_checkout_session(self) -> str:
-        expiration_minutes = settings.PAYMENT_SESSION_EXPIRATION_MINUTES
-        currency = settings.PAYMENT_CURRENCY
-
-        existing_payment = Payment.objects.filter(
+    def check_existing_payment(self):
+        return Payment.objects.filter(
             reservation=self.reservation,
             provider="stripe",
             status=Payment.Statuses.PENDING,
             expires_at__gt=timezone.now(),
         ).first()
 
-        if existing_payment:
-            return existing_payment.checkout_url
-
+    def create_session(self, currency, expiration_minutes):
         session = stripe.checkout.Session.create(
             line_items=[
                 {
@@ -49,7 +44,9 @@ class StripePaymentService(AbstractPaymentService):
             ),
             customer_email=self.reservation.user.email,
         )
+        return session
 
+    def create_payment(self, session):
         Payment.objects.create(
             reservation=self.reservation,
             provider="stripe",
@@ -61,6 +58,19 @@ class StripePaymentService(AbstractPaymentService):
                 tz=datetime_timezone.utc,
             ),
         )
+
+    def retrieve_or_create_checkout_session(self) -> str:
+        expiration_minutes = settings.PAYMENT_SESSION_EXPIRATION_MINUTES
+        currency = settings.PAYMENT_CURRENCY
+
+        existing_payment = self.check_existing_payment()
+
+        if existing_payment:
+            return existing_payment.checkout_url
+
+        session = self.create_session(currency, expiration_minutes)
+
+        self.create_payment(session)
 
         return session.url
 
