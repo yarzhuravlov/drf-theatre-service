@@ -199,8 +199,8 @@ FRONTEND_CANCEL_URL = os.environ.get("FRONTEND_CANCEL_URL")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Theater Service API',
-    'DESCRIPTION': 'API for theater',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "Theater Service API",
+    "DESCRIPTION": "API for theater",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }

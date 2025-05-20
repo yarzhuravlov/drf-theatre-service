@@ -2,7 +2,15 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from theatre.models import Play, Actor, Genre, Performance, TheatreHall, Zone, ZonePrice
+from theatre.models import (
+    Play,
+    Actor,
+    Genre,
+    Performance,
+    TheatreHall,
+    Zone,
+    ZonePrice,
+)
 
 
 class PlayViewSetTests(TestCase):
@@ -10,7 +18,9 @@ class PlayViewSetTests(TestCase):
         self.client = APIClient()
         self.actor = Actor.objects.create(first_name="John", last_name="Doe")
         self.genre = Genre.objects.create(name="Drama")
-        self.play = Play.objects.create(title="Hamlet", description="A tragedy")
+        self.play = Play.objects.create(
+            title="Hamlet", description="A tragedy"
+        )
         self.play.actors.add(self.actor)
         self.play.genres.add(self.genre)
 
@@ -39,11 +49,18 @@ class PerformanceViewSetTests(TestCase):
         self.client = APIClient()
         self.theatre_hall = TheatreHall.objects.create(name="Main Hall")
         self.zone = Zone.objects.create(
-            name="VIP", theatre_hall=self.theatre_hall, rows=10, seats_in_row=10
+            name="VIP",
+            theatre_hall=self.theatre_hall,
+            rows=10,
+            seats_in_row=10,
         )
-        self.play = Play.objects.create(title="Hamlet", description="A tragedy")
+        self.play = Play.objects.create(
+            title="Hamlet", description="A tragedy"
+        )
         self.performance = Performance.objects.create(
-            play=self.play, theatre_hall=self.theatre_hall, show_time="2025-05-20T19:00:00Z"
+            play=self.play,
+            theatre_hall=self.theatre_hall,
+            show_time="2025-05-20T19:00:00Z",
         )
         ZonePrice.objects.create(
             zone=self.zone, performance=self.performance, ticket_price=100
@@ -57,7 +74,9 @@ class PerformanceViewSetTests(TestCase):
         self.assertEqual(response.data[0]["play"]["title"], "Hamlet")
 
     def test_retrieve_performance(self):
-        url = reverse("v1:theatre:performance-detail", args=[self.performance.id])
+        url = reverse(
+            "v1:theatre:performance-detail", args=[self.performance.id]
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["play"]["title"], "Hamlet")
