@@ -1,41 +1,19 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from drf_spectacular.utils import (
-    extend_schema,
-    extend_schema_view,
-    OpenApiResponse,
-)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from payments.services.factory import get_payment_service
 from payments.services.stripe import StripePaymentService
+from payments.schemas import (
+    create_checkout_session_view_schema,
+    stripe_webhook_view_schema,
+)
 from reservations.models import Reservation
 
 
-@extend_schema_view(
-    post=extend_schema(
-        description="Create or retrieve a Stripe checkout session for a reservation.",
-        responses={
-            200: OpenApiResponse(
-                response={
-                    "type": "object",
-                    "properties": {
-                        "checkout_url": {
-                            "type": "string",
-                            "description": "URL to redirect the user to the Stripe checkout session.",
-                        }
-                    },
-                },
-                description="Checkout session created successfully.",
-            ),
-            404: OpenApiResponse(
-                description="Reservation not found.",
-            ),
-        },
-    )
-)
+@create_checkout_session_view_schema
 class CreateCheckoutSessionView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -51,12 +29,7 @@ class CreateCheckoutSessionView(APIView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-@extend_schema_view(
-    post=extend_schema(
-        description="Handle Stripe webhook events.",
-        request=None,
-    )
-)
+@stripe_webhook_view_schema
 class StripeWebhookView(APIView):
     def post(self, request):
         payload = request.body

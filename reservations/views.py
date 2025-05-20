@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from base.mixins import BaseViewSetMixin
 from reservations.models import Reservation
+from reservations.schemas import reservation_view_schema
 from reservations.serializers import (
     ReservationCreateSerializer,
     ReservationListSerializer,
@@ -10,23 +11,8 @@ from reservations.serializers import (
 )
 from reservations.services import ReservationService
 
-from drf_spectacular.utils import (
-    extend_schema,
-    extend_schema_view,
-)
 
-
-@extend_schema_view(
-    list=extend_schema(
-        description="Retrieve a list of reservations made by the authenticated user.",
-    ),
-    create=extend_schema(
-        description="Create a new reservation with tickets for the authenticated user.",
-    ),
-    retrieve=extend_schema(
-        description="Retrieve details of a specific reservation by its ID.",
-    ),
-)
+@reservation_view_schema
 class ReservationViewSet(BaseViewSetMixin, viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer

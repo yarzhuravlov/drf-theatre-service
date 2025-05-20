@@ -5,6 +5,12 @@ from rest_framework import filters, generics, viewsets
 from base.mixins import BaseViewSetMixin
 from theatre.filters import PerformanceFilter
 from theatre.models import Actor, Genre, Performance, Play
+from theatre.schemas import (
+    play_view_schema,
+    performance_view_schema,
+    actor_view_schema,
+    genre_view_schema,
+)
 from theatre.serializers import (
     ActorSerializer,
     GenreSerializer,
@@ -15,21 +21,9 @@ from theatre.serializers import (
     PlayRetrieveSerializer,
     PlaySerializer,
 )
-from drf_spectacular.utils import (
-    extend_schema,
-    extend_schema_view,
-    OpenApiParameter,
-)
 
 
-@extend_schema_view(
-    list=extend_schema(
-        description="Retrieve a list of plays with their genres and actors.",
-    ),
-    retrieve=extend_schema(
-        description="Retrieve detailed information about a specific play, including its future performances.",
-    ),
-)
+@play_view_schema
 class PlayViewSet(
     BaseViewSetMixin,
     generics.ListAPIView,
@@ -69,16 +63,7 @@ class PlayViewSet(
         return queryset
 
 
-@extend_schema_view(
-    list=extend_schema(
-        description="Retrieve a list of performances with available tickets and related play details.",
-        responses=PerformanceListSerializer,
-    ),
-    retrieve=extend_schema(
-        description="Retrieve detailed information about a specific performance, including zone prices and tickets.",
-        responses=PerformanceDetailSerializer,
-    ),
-)
+@performance_view_schema
 class PerformanceViewSet(
     BaseViewSetMixin,
     generics.ListAPIView,
@@ -118,20 +103,7 @@ class PerformanceViewSet(
         return queryset
 
 
-@extend_schema_view(
-    list=extend_schema(
-        description="Retrieve a list of actors with search functionality.",
-        responses=ActorSerializer,
-        parameters=[
-            OpenApiParameter(
-                name="search",
-                description="Search actors by first or last name.",
-                required=False,
-                type=str,
-            )
-        ],
-    ),
-)
+@actor_view_schema
 class ActorViewSet(generics.ListAPIView, viewsets.ViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -139,20 +111,7 @@ class ActorViewSet(generics.ListAPIView, viewsets.ViewSet):
     search_fields = ["first_name", "last_name"]
 
 
-@extend_schema_view(
-    list=extend_schema(
-        description="Retrieve a list of genres with search functionality.",
-        responses=GenreSerializer,
-        parameters=[
-            OpenApiParameter(
-                name="search",
-                description="Search genres by name.",
-                required=False,
-                type=str,
-            )
-        ],
-    ),
-)
+@genre_view_schema
 class GenreViewSet(generics.ListAPIView, viewsets.ViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
