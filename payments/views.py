@@ -1,5 +1,10 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiResponse,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,13 +12,6 @@ from rest_framework.views import APIView
 from payments.services.factory import get_payment_service
 from payments.services.stripe import StripePaymentService
 from reservations.models import Reservation
-
-from drf_spectacular.utils import (
-    extend_schema,
-    extend_schema_view,
-    OpenApiResponse,
-    # OpenApiParameter,
-)
 
 
 @extend_schema_view(
