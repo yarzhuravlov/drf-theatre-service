@@ -11,7 +11,11 @@ class Payment(TimestampedBaseModel, models.Model):
         EXPIRED = "expired"
         CANCELLED = "cancelled"
 
-    reservation = models.OneToOneField(Reservation, on_delete=models.PROTECT)
+    reservation = models.OneToOneField(
+        Reservation,
+        on_delete=models.PROTECT,
+        related_name="payment",
+    )
     provider = models.CharField(max_length=63)
     status = models.CharField(max_length=20, choices=Statuses.choices)
     checkout_url = models.TextField()
