@@ -1,10 +1,10 @@
 from django.db import models
 
-from base.models import CreatedAtBaseModel
+from base.models import TimestampedBaseModel
 from reservations.models import Reservation
 
 
-class Payment(CreatedAtBaseModel, models.Model):
+class Payment(TimestampedBaseModel, models.Model):
     class Statuses(models.TextChoices):
         PENDING = "pending"
         CONFIRMED = "confirmed"
